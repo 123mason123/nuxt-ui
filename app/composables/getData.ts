@@ -1,10 +1,15 @@
 import type { NitroFetchRequest } from 'nitropack';
 import type { FetchOptions } from 'ofetch';
-// import { showToast, showLoadingToast, closeToast } from 'vant';
+ import { showToast, showLoadingToast, closeToast } from 'vant';
+
+ interface ExtendedFetchOptions<T> extends FetchOptions<T> {  
+  page?: number;  
+  // 可以添加其他你需要的属性  
+}  
 
 interface Params {
   url: NitroFetchRequest;
-  opts: FetchOptions<any>;
+  opts: ExtendedFetchOptions<any>; 
   method?: 'get' | 'post';
   contentType: 'application/x-www-form-urlencoded' | 'application/json';
 }
@@ -44,7 +49,7 @@ export async function getFetchData({
   const { data } = await useFetch(requestURL, {
     method,
     // ofetch库会自动识别请求地址，对于url已包含域名的请求不会再拼接baseURL
-    baseURL: config.public.baseURL,
+    baseURL: config.public.baseURL as string,
     // onRequest相当于请求拦截
     onRequest({ request, options }) {
       // 设置请求头
@@ -56,7 +61,7 @@ export async function getFetchData({
         options.query = { ...opts };
       }
       if (loadingCount === 0) {
-        // showLoadingToast({ forbidClick: true });
+         showLoadingToast({ forbidClick: true });
       }
       loadingCount++;
     },
@@ -76,7 +81,7 @@ export async function getFetchData({
           '\n response:',
           response._data
         );
-        // showToast(response._data.message);
+         showToast(response._data.message);
       } else {
         return response;
       }
@@ -84,12 +89,12 @@ export async function getFetchData({
     onRequestError({ request, options, error }) {
       // 处理请求错误
       // console.warn('request error', error);
-      // showToast('Request Error');
+       showToast('Request Error');
     },
     onResponseError({ request, response, options }) {
       // 处理响应错误
       // console.warn('request error', response);
-      // showToast('Request Error');
+       showToast('Request Error');
     },
   });
   // 这里data本身是个ref对象，将其内部值抛出去方便调用时获得数据。

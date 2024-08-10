@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { withoutTrailingSlash } from 'ufo'
-
 const route = useRoute()
+const title: string = "Example Title";
 
 const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne())
 if (!page.value) {
